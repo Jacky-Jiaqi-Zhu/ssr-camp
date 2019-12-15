@@ -1,40 +1,64 @@
 import React from 'react'
 import { renderToString } from 'react-dom/server'
 import express from 'express'
-import {StaticRouter} from 'react-router-dom'
+import {StaticRouter, matchPath, Route} from 'react-router-dom'
 import { Provider } from 'react-redux'
-import App from '../src/App'
-import store from '../src/store/store'
+import routes from '../src/App'
+import {getServerStore} from '../src/store/store'
 
+const store = getServerStore()
 const app = express()
 
 app.use(express.static('public'))
 
 app.get('*', (req, res) => {
-    const content = renderToString(
-        <Provider store={store}>
-            <StaticRouter location={req.url}>
-                {App}
-            </StaticRouter>
-        </Provider>
-    )
+    // get rendered component based on route, also get data via loadData()
 
-    res.send(`
-    <html>
-        <head>
-            <meta charset="utf-8"/>
-            <title>react ssr11</title>
-        </head>
+    // save request
+    const promises = []
 
-        <body>
-            <div id="root">${content}</div>
-        </body>
-        <script src="/bundle.js"></script>
+    routes.some(route=>{
+        const match = matchPath(req.path, route)
+        if(match) {
+            const {loadData} = route.component
+            if(loadData) {
+                promises.push(loadData(store))
+            }
+        }
+    })
 
 
-    </html>
-    
-    `)
+    // wait for all requests
+    Promise.all(promises).then(()=>{
+        const content = renderToString(
+            <Provider store={store}>
+                <StaticRouter location={req.url}>
+                    {routes.map(route=><Route {...route}></Route>)}
+                </StaticRouter>
+            </Provider>
+        )
+
+        res.send(`
+        <html>
+            <head>
+                <meta charset="utf-8"/>
+                <title>react ssr11</title>
+            </head>
+
+            <body>
+                <div id="root">${content}</div>
+                <script>
+                    window.__context = ${JSON.stringify(store.getState())}
+                </script>
+            </body>
+            <script src="/bundle.js"></script>
+
+
+        </html>
+        
+        `)        
+    })
+
 
 })
 
