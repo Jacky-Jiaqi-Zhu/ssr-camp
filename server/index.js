@@ -5,6 +5,7 @@ import {StaticRouter, matchPath, Route} from 'react-router-dom'
 import { Provider } from 'react-redux'
 import routes from '../src/App'
 import {getServerStore} from '../src/store/store'
+import Header from '../src/component/Header'
 
 const store = getServerStore()
 const app = express()
@@ -33,6 +34,7 @@ app.get('*', (req, res) => {
         const content = renderToString(
             <Provider store={store}>
                 <StaticRouter location={req.url}>
+                    <Header></Header>
                     {routes.map(route=><Route {...route}></Route>)}
                 </StaticRouter>
             </Provider>
