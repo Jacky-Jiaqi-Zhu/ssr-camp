@@ -2,7 +2,9 @@ import React from 'react'
 import { renderToString } from 'react-dom/server'
 import express from 'express'
 import {StaticRouter} from 'react-router-dom'
+import { Provider } from 'react-redux'
 import App from '../src/App'
+import store from '../src/store/store'
 
 const app = express()
 
@@ -10,9 +12,11 @@ app.use(express.static('public'))
 
 app.get('*', (req, res) => {
     const content = renderToString(
-        <StaticRouter location={req.url}>
-            {App}
-        </StaticRouter>
+        <Provider store={store}>
+            <StaticRouter location={req.url}>
+                {App}
+            </StaticRouter>
+        </Provider>
     )
 
     res.send(`
