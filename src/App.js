@@ -1,12 +1,14 @@
 import React, {useState}  from 'react'
+import {Route} from 'react-router-dom'
+import Index from './component/container/Index'
+import About from './component/container/About'
 
-function App(props) {
-    const [count, setCount] = useState(1)
-    return <div>
-        <h1>hello {props.title}! {count}</h1>
-        <button onClick={()=>setCount(count+1)}>count</button>
+
+
+export default (
+    <div>
+        <Route path="/" exact component={Index}></Route>
+        <Route path="/about" exact component={About}></Route>
     </div>
-    
-}
+)
 
-export default <App title="kaikeba"></App>
