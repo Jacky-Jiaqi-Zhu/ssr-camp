@@ -7,7 +7,9 @@ function Index(props) {
     const [count, setCount] = useState(1)
 
     useEffect(()=>{
-        props.getIndexList()
+        if(!props.list.length) {
+            props.getIndexList()
+        }
     }, [])
 
     return <div>
