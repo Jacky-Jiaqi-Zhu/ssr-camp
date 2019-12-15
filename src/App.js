@@ -1,7 +1,7 @@
 import React, {useState}  from 'react'
 import {Route} from 'react-router-dom'
-import Index from './component/container/Index'
-import About from './component/container/About'
+import Index from './container/Index'
+import About from './container/About'
 
 
 
