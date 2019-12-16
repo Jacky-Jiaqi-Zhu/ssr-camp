@@ -59,6 +59,8 @@ app.get('*', (req, res) => {
         </html>
         
         `)        
+    }).catch(()=>{
+        res.send('error 500')
     })
 
 
