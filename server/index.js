@@ -30,7 +30,8 @@ app.get('*', (req, res) => {
 
 
     // wait for all requests
-    Promise.all(promises).then(()=>{
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled
+    Promise.allSettled(promises).then(()=>{
         const content = renderToString(
             <Provider store={store}>
                 <StaticRouter location={req.url}>
