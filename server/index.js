@@ -1,16 +1,22 @@
 import React from 'react'
 import { renderToString } from 'react-dom/server'
 import express from 'express'
-import {StaticRouter, matchPath, Route} from 'react-router-dom'
+import {StaticRouter, matchPath, Route, Switch} from 'react-router-dom'
 import { Provider } from 'react-redux'
 import routes from '../src/App'
+import proxy from 'http-proxy-middleware'
 import {getServerStore} from '../src/store/store'
 import Header from '../src/component/Header'
+import { ContextReplacementPlugin } from 'webpack'
 
 const store = getServerStore()
 const app = express()
 
 app.use(express.static('public'))
+
+// requests from client start with /api'
+app.use('/api', proxy({target: 'http://localhost:9090', changeOrigin: true}))
+
 
 app.get('*', (req, res) => {
     // get rendered component based on route, also get data via loadData()
@@ -30,15 +36,27 @@ app.get('*', (req, res) => {
 
 
     // wait for all requests
-    Promise.all(promises).then(()=>{
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled
+    Promise.allSettled(promises).then(()=>{
+        const context = {}
         const content = renderToString(
             <Provider store={store}>
-                <StaticRouter location={req.url}>
+                <StaticRouter location={req.url} context={context}>
                     <Header></Header>
-                    {routes.map(route=><Route {...route}></Route>)}
+                    <Switch>
+                        {routes.map(route=><Route {...route}></Route>)}
+                    </Switch>
                 </StaticRouter>
             </Provider>
         )
+
+        console.log('context', context)
+        if(context.statuscode) {
+            res.status(context.statuscode)
+        }
+        if(context.action == "REPLACE") {
+            Response.redirect(301, context)
+        }
 
         res.send(`
         <html>

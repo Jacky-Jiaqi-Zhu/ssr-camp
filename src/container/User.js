@@ -1,15 +1,18 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import {getUserInfo} from '../store/user'
-
+import {Redirect} from 'react-router-dom'
 
 function User(props) {
     console.log(props.userinfo)
-    return <div>
-        <h1>
-            hellow{props.userinfo.name}, the best one is {props.userinfo.best}
-        </h1>
-    </div>
+
+    return <Redirect to="/about"></Redirect>
+
+    // return <div>
+    //     <h1>
+    //         hellow{props.userinfo.name}, the best one is {props.userinfo.best}
+    //     </h1>
+    // </div>
     
 }
 
