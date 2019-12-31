@@ -2,13 +2,10 @@ import React, {useState, useEffect}  from 'react'
 import {connect} from 'react-redux'
 import {getIndexList} from '../store/index'
 import styles from './Index.css'
-
+import withStyle from '../withStyle.js'
 
 function Index(props) {
     const [count, setCount] = useState(1)
-    if(props.staticContext) {
-        props.staticContext.css.push(styles._getCss())
-    }
 
     useEffect(()=>{
         if(!props.list.length) {
@@ -39,4 +36,4 @@ Index.loadData = (store)=> {
 export default connect(
     state=>({list:state.index.list}),
     {getIndexList}
-)(Index)
+)(withStyle(Index, styles))
