@@ -1,4 +1,5 @@
 const path = require('path')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 // server side
 
 module.exports = {
@@ -8,6 +9,13 @@ module.exports = {
         filename: "bundle.js",
         path: path.resolve(__dirname, 'public')
     },
+    plugins: [
+        new HtmlWebpackPlugin({
+            filename: 'index.csr.html',
+            template: 'src/index.csr.html',
+            inject: true
+        })
+    ],
     module: {
         rules: [
             {

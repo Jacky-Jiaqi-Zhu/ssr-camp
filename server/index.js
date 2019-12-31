@@ -1,3 +1,5 @@
+import path from 'path'
+import fs from 'fs'
 import React from 'react'
 import { renderToString } from 'react-dom/server'
 import express from 'express'
@@ -17,8 +19,24 @@ app.use(express.static('public'))
 // requests from client start with /api'
 app.use('/api', proxy({target: 'http://localhost:9090', changeOrigin: true}))
 
+function csrRender(res) {
+    const filename = path.resolve(process.cwd(), 'public/index.csr.html')
+    const html = fs.readFileSync(filename, 'utf-8')
+    return res.send(html)
+}
 
 app.get('*', (req, res) => {
+    if(req.query._mode=='csr') {
+        console.log('url param enable csr fallback')
+        return csrRender(res)
+    }
+
+
+
+
+    // manual switch csr\
+    // overload trigger csr
+
     // get rendered component based on route, also get data via loadData()
 
     // save request
@@ -44,7 +62,7 @@ app.get('*', (req, res) => {
                 <StaticRouter location={req.url} context={context}>
                     <Header></Header>
                     <Switch>
-                        {routes.map(route=><Route {...route}></Route>)}
+                        {routes.map(route=><Route key={route.key} {...route}></Route>)}
                     </Switch>
                 </StaticRouter>
             </Provider>

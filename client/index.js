@@ -17,7 +17,13 @@ const Page = <Provider store={store}>
     </BrowserRouter>
 </Provider>
 
+if(window.__context) {
+    ReactDom.hydrate(Page, document.getElementById('root'))
+}else{
+    ReactDom.render(Page, document.getElementById('root'))
+}
+
 // hydrate
-console.log(document)
-console.log(document.getElementById("root"))
-ReactDom.hydrate(Page, document.getElementById('root'))
+// console.log(document)
+// console.log(document.getElementById("root"))
+// ReactDom.hydrate(Page, document.getElementById('root'))
