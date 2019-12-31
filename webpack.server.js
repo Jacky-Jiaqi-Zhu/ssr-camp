@@ -27,6 +27,9 @@ module.exports = {
                     "isomorphic-style-loader",
                     {
                         loader: 'css-loader',
+                        options: {
+                            modules: true
+                        }
                     }
                 ]
             }

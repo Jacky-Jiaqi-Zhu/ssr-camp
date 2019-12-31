@@ -56,7 +56,9 @@ app.get('*', (req, res) => {
     // wait for all requests
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled
     Promise.allSettled(promises).then(()=>{
-        const context = {}
+        const context = {
+            css: []
+        }
         const content = renderToString(
             <Provider store={store}>
                 <StaticRouter location={req.url} context={context}>
@@ -76,11 +78,17 @@ app.get('*', (req, res) => {
             Response.redirect(301, context)
         }
 
+        const css = context.css.join('\n')
+
+
         res.send(`
         <html>
             <head>
                 <meta charset="utf-8"/>
                 <title>react ssr11</title>
+                <style>
+                    ${css}
+                </style>
             </head>
 
             <body>
